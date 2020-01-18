@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include<string.h>
 #include <stdlib.h>
-char mot[11][6]={"STOP","ADD","SUB","MUL","MOVER","MOVEM","COMP","BC","DIV","READ","PRINT"}; //Mnemonics Code Table
+char mot[15][6]={"STOP","ADD","SUB","MUL","MOVER","MOVEM","COMP","BC","DIV","READ","PRINT","DS","DC"}; //Mnemonics Code Table
 char pot[6][6]={"START","END","LTORG","ORIGIN","EQU"}; //Pseudo Opcode Table
 char r[4][6]={"AREG","BREG","CREG","DREG"}; //registers
 
@@ -19,23 +19,26 @@ struct s
 
 int isInMot(char [10]);
 int isInPot(char[10]);
-
+int isReg(char[10]);
 int main()
 {
 
-	char wc[10],temps[5];	
-	int lc,LTP=0,STP=0,i,j=0,k=0,litflag=0,m=0,tempb,flag=0,oldLC=0,val=0;
+	char wc[10],temps[20];	
+	int lc,LTP=0,STP=1,i,j=0,k=0,litflag=0,m=0,tempb,flag=0,oldLC=0,val=0;
 	FILE *fip,*fir;
 	fip=fopen("input.asm","r"); //assembler input
 	fir=fopen("ir.txt","w"); //Intermediate Representation
 	fscanf(fip,"%s",wc); //read input
 	while(!feof(fip))
-	{
+	{	
+		up:
 		//check start
-		up:if(!strcmp(wc,"START")) //if start copy address(lc)
+		if(!strcmp(wc,"START")) //if start copy address(lc)
 		{
 			fscanf(fip,"%d",&lc);
 			fprintf(fir,"(%s,%d)(%s,%d)     \t LC\n","AD",1,"C",lc);
+			fscanf(fip,"%s",wc); //read next
+			goto up;
 		}
 		//check origin
 		else if(!strcmp(wc,"ORIGIN")) //if ORIGIN copy address(lc)
@@ -47,31 +50,84 @@ int main()
 				//check if said symbol is present in symbol table
 				if(!strcmp(sy[j].name,wc))
 				{
-					flag=1;
 					fprintf(fir,"(%s,%d)","S",j);
 					fscanf(fip,"%s",wc); //read next
 					if(!strcmp(wc,"+"))
 					{
+					    fprintf(fir,"%s",wc);
 						fscanf(fip,"%s",wc); //read next
+						fprintf(fir,"%s",wc);
 						oldLC=lc;
 						val=atoi(wc);
 						lc=val+sy[j].add;
 					}
 					if(!strcmp(wc,"-"))
 					{
+					    fprintf(fir,"%s",wc);
 						fscanf(fip,"%s",wc); //read next
+						fprintf(fir,"%s",wc);
 						oldLC=lc;
 						val=atoi(wc);
 						lc=sy[j].add-val;
 					}
-					fprintf(fir,"     \t %d/%d",oldLC,lc);
+					fprintf(fir,"             \t %d/%d\n",oldLC,lc);
+					fscanf(fip,"%s",wc); //read next
 					goto up;
 				}
 			}
+			val=atoi(wc);
+			oldLC=lc;
+			lc=val;
+			fprintf(fir,"             \t %d/%d\n",oldLC,lc);
+			fscanf(fip,"%s",wc); //read next
+			goto up;
 		}
-		fscanf(fip,"%s",wc); //read next
+		//check EQU
+		else if(!strcmp(wc,"EQU"))
+		{
+			int value;
+		    fprintf(fir,"(%s,%d)","AD",5);  
+			fscanf(fip,"%s",wc); //read next
+			for(j=0;j<STP;j++)
+			{
+				//check if said symbol is present in symbol table
+				if(!strcmp(sy[j].name,wc))
+				{
+					fprintf(fir,"(%s,%d)","S",j);
+					fscanf(fip,"%s",wc); //read next
+					if(!strcmp(wc,"+"))
+					{
+						fprintf(fir,"%s",wc);
+						fscanf(fip,"%s",wc); //read next
+						fprintf(fir,"%s",wc);
+						val=atoi(wc);
+						value=val+sy[j].add;
+					}
+					if(!strcmp(wc,"-"))
+					{
+						fprintf(fir,"%s",wc);
+						fscanf(fip,"%s",wc); //read next
+						fprintf(fir,"%s",wc);
+						val=atoi(wc);
+						value=sy[j].add-val;
+					}
+				}
+			}
+			for(j=0;j<STP;j++)
+			{
+				 //check if said symbol is present in symbol table
+				if(!strcmp(sy[j].name,temps))
+				{
+					sy[j].add=value;
+				}
+			}
+			fprintf(fir,"     \t %d\n",lc);
+			fscanf(fip,"%s",wc); //read next
+			goto up;
+
+		}
 		//check first is symbol
-		if(!isInMot(wc) && !isInPot(wc))
+		if(!isInMot(wc) && !isInPot(wc) && !isReg(wc))
 		{
 			for(j=0;j<STP;j++)
 			{
@@ -80,7 +136,7 @@ int main()
 				{
 					flag=1;
 					sy[j].add=lc;
-					strcpy(temps,sy[STP].name);
+					strcpy(temps,sy[j].name);
 					fscanf(fip,"%s",wc); //read next
 					break;
 				}	
@@ -93,7 +149,9 @@ int main()
 				STP++;
 				fscanf(fip,"%s",wc); //read next
 			}
-		}		
+		}
+		flag=0;
+
 		//check if it is present in mnemonics table
 		for(i=0;i<11;i++)
 		{
@@ -101,9 +159,10 @@ int main()
 			{
 				if(!strcmp(wc,"STOP"))//for STOP
 				{
-					fprintf(fir,"(%s,%d)","IS",i);
+					fprintf(fir,"(%s,%d)          \t %d\n","IS",i,lc);
 					fscanf(fip,"%s",wc);
-					break;
+					lc++;
+					goto up;
 				}	
 				fprintf(fir,"(%s,%d)","IS",i); //found in mot
 				fscanf(fip,"%s",wc);
@@ -121,15 +180,20 @@ int main()
 						if(lit[j].name==wc[k]) //if(!strcmp(lit[j].name,wc[k]))
 						{
 							litflag=1;
-							fprintf(fir,"(%s,%d)\t %d","L",j,lc);
+							fprintf(fir,"(%s,%d)\t %d\n","L",j,lc);
+							lc++;
+							fscanf(fip,"%s",wc); //read next
+							goto up;
 						} //else add new entry in Literal table
 					if(litflag==0)
 					{
 						lit[LTP].name=wc[k];
-						fprintf(fir,"(%s,%d)\t %d","L",LTP,lc);
+						fprintf(fir,"(%s,%d)\t %d\n","L",LTP,lc);
 						LTP++;
+						lc++;
+						fscanf(fip,"%s",wc); //read next
+						goto up;
 					}
-					break;
 				}
 				else //if it’s not literal it must be symbol
 				{
@@ -141,15 +205,18 @@ int main()
 							flag=1;
 							fprintf(fir,"(%s,%d)\t %d\n","S",j,lc);
 							lc++;
+							fscanf(fip,"%s",wc); //read next
 							goto up;
 						}
 					} //else add new entry in symbol table
 					if(flag==0)
 					{
 						strcpy(sy[STP].name,wc);
-						fprintf(fir,"(%s,%d)\t %d","S",STP,lc);
+						fprintf(fir,"(%s,%d)\t %d\n","S",STP,lc);
 						STP++;
-						break;
+						lc++;
+						fscanf(fip,"%s",wc); //read next
+						goto up;
 					}
 				}
 			}
@@ -158,7 +225,8 @@ int main()
 			{
 				fscanf(fip,"%d",&tempb);
 				fprintf(fir,"(%s,%d)(C,%d)     \t %d\n","DL",2,tempb,lc);
-				lc+=tempb;					
+				lc+=tempb;
+				fscanf(fip,"%s",wc); //read next					
 				goto up;
 			}
 			else if(!strcmp(wc,"DC"))
@@ -166,6 +234,7 @@ int main()
 				fscanf(fip,"%d",&tempb);
 				fprintf(fir,"(%s,%d)(C,%d)     \t %d\n","DL",1,tempb,lc);
 				lc++;
+				fscanf(fip,"%s",wc); //read next
 				goto up;
 			}
 		}
@@ -180,8 +249,14 @@ int main()
 			for(i=0;i<LTP;i++)
 			{
 				lit[i].add=lc;
-				fprintf(fir,"          ='%c' \t %d\n",lit[i].name,lc);
+				if(!strcmp(wc,"END"))
+					fprintf(fir,"           ='%c' \t %d\n",lit[i].name,lc);
 				lc++;
+			}
+			if(!strcmp(wc,"LTORG"))
+			{
+				fscanf(fip,"%s",wc); //read next
+				goto up;				
 			}
 			if(!strcmp(wc,"END"))
 			{
@@ -189,14 +264,11 @@ int main()
 				break;
 			}			
 		}
-
-		lc++;
-		fprintf(fir,"\n");
 	}
 	//print databases
 	printf("\n DATABASE:-");
 	printf("\n\n1] SYMBOL TABLE:\n------------------\nSYMBOL NO.\tSYMBOL\tADDRESS");
-	for(i=0;i<STP;i++)
+	for(i=1;i<STP;i++)
 		printf("\n %d          \t %s\t%d",i,sy[i].name,sy[i].add);
 	printf("\n\n2] LITERAL TABLE:\n------------------\nLITERAL NO.\tLITERAL\tADDRESS");
 	for(i=0;i<LTP;i++)
@@ -211,7 +283,7 @@ int main()
 int isInMot(char temp[10])
 {
 	int i,flag=0;
-	for(i=0;i<11;i++)
+	for(i=0;i<13;i++)
 	{
 		if(!strcmp(temp,mot[i]))
 			flag=1;
@@ -224,6 +296,16 @@ int isInPot(char temp[10])
 	for(i=0;i<6;i++)
 	{
 		if(!strcmp(temp,pot[i]))
+			flag=1;
+	}
+	return flag;
+}
+int isReg(char temp[10])
+{
+	int i,flag=0;
+	for(i=0;i<6;i++)
+	{
+		if(!strcmp(temp,r[i]))
 			flag=1;
 	}
 	return flag;
