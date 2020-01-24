@@ -24,6 +24,7 @@ int main()
 {
 
 	char wc[10],temps[20];	
+	int POOL[10]={0},poolflag=0,pooltab=0;
 	int lc,LTP=0,STP=1,i,j=0,k=0,litflag=0,m=0,tempb,flag=0,oldLC=0,val=0;
 	FILE *fip,*fir;
 	fip=fopen("input.asm","r"); //assembler input
@@ -174,9 +175,10 @@ int main()
 				if(!strcmp(wc,"=")) //if = it is literal
 				{
 					k=1;
+					litflag=0;
 					fscanf(fip,"%s",wc);
 					//check if said literal already present in literlar table
-					for(j=0;j<LTP;j++)
+					for(j=poolflag;j<LTP;j++)
 						if(lit[j].name==wc[k]) //if(!strcmp(lit[j].name,wc[k]))
 						{
 							litflag=1;
@@ -243,10 +245,14 @@ int main()
 		if(!strcmp(wc,"END") || !strcmp(wc,"LTORG"))
 		{
 			if(!strcmp(wc,"END"))
+			{
 				fprintf(fir,"(%s,%d)          \t %d\n","AD",2,lc);
+			}
 			if(!strcmp(wc,"LTORG"))
+			{
 				fprintf(fir,"(%s,%d)          \t %d\n","AD",3,lc);
-			for(i=0;i<LTP;i++)
+			}
+			for(i=poolflag;i<LTP;i++)
 			{
 				lit[i].add=lc;
 				if(!strcmp(wc,"END"))
@@ -256,24 +262,33 @@ int main()
 			if(!strcmp(wc,"LTORG"))
 			{
 				fscanf(fip,"%s",wc); //read next
+				POOL[pooltab]++;
+				pooltab++;
+				poolflag=LTP;
 				goto up;				
 			}
 			if(!strcmp(wc,"END"))
 			{
 				fprintf(fir,"                    \t %d\n",lc);
+				POOL[pooltab]++;
+				pooltab++;
+				poolflag=LTP;
 				break;
 			}			
 		}
 	}
 	//print databases
 	printf("\n DATABASE:-");
-	printf("\n\n1] SYMBOL TABLE:\n------------------\nSYMBOL NO.\tSYMBOL\tADDRESS");
+	printf("\n\n1] SYMBOL TABLE:\n------------------------------------\nSYMBOL NO.\tSYMBOL\tADDRESS");
 	for(i=1;i<STP;i++)
 		printf("\n %d          \t %s\t%d",i,sy[i].name,sy[i].add);
-	printf("\n\n2] LITERAL TABLE:\n------------------\nLITERAL NO.\tLITERAL\tADDRESS");
+	printf("\n\n2] LITERAL TABLE:\n------------------------------------\nLITERAL NO.\tLITERAL\tADDRESS");
 	for(i=0;i<LTP;i++)
 		printf("\n %d           \t %c\t%d",i,lit[i].name,lit[i].add);
-	printf("\n");
+	printf("\n\n3]POOL TAB:\n------------------------------------\nPOOL NO.\tPOOL\n");
+	for(i=0;i<poolflag;i++)
+	        printf("%d\t\t%d\n",i,POOL[i]);
+	       
 	fclose(fir); //close files opened
 	fclose(fip);
 	return 0;
