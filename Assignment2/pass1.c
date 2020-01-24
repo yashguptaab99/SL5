@@ -37,14 +37,14 @@ int main()
 		if(!strcmp(wc,"START")) //if start copy address(lc)
 		{
 			fscanf(fip,"%d",&lc);
-			fprintf(fir,"(%s,%d)(%s,%d)     \t LC\n","AD",1,"C",lc);
+			fprintf(fir,"(%s,%d) (%s,%d)     \t %d\n","AD",1,"C",lc,lc);
 			fscanf(fip,"%s",wc); //read next
 			goto up;
 		}
 		//check origin
 		else if(!strcmp(wc,"ORIGIN")) //if ORIGIN copy address(lc)
 		{
-			fprintf(fir,"(%s,%d)","AD",4);
+			fprintf(fir,"(%s,%d) ","AD",4);
 			fscanf(fip,"%s",wc); //read next
 			for(j=0;j<STP;j++)
 			{
@@ -87,7 +87,7 @@ int main()
 		else if(!strcmp(wc,"EQU"))
 		{
 			int value;
-		    fprintf(fir,"(%s,%d)","AD",5);  
+		    fprintf(fir,"(%s,%d) ","AD",5);  
 			fscanf(fip,"%s",wc); //read next
 			for(j=0;j<STP;j++)
 			{
@@ -165,11 +165,11 @@ int main()
 					lc++;
 					goto up;
 				}	
-				fprintf(fir,"(%s,%d)","IS",i); //found in mot
+				fprintf(fir,"(%s,%d) ","IS",i); //found in mot
 				fscanf(fip,"%s",wc);
 				for(j=0;j<4;j++) //now find register
 					if(!strcmp(wc,r[j])){
-						fprintf(fir,"(R,%d)",j+1);
+						fprintf(fir,"(R,%d) ",j+1);
 						fscanf(fip,"%s",wc);
 					}	
 				if(!strcmp(wc,"=")) //if = it is literal
@@ -226,7 +226,7 @@ int main()
 			if(!strcmp(wc,"DS"))
 			{
 				fscanf(fip,"%d",&tempb);
-				fprintf(fir,"(%s,%d)(C,%d)     \t %d\n","DL",2,tempb,lc);
+				fprintf(fir,"(%s,%d) (C,%d)     \t %d\n","DL",2,tempb,lc);
 				lc+=tempb;
 				fscanf(fip,"%s",wc); //read next					
 				goto up;
@@ -234,7 +234,7 @@ int main()
 			else if(!strcmp(wc,"DC"))
 			{
 				fscanf(fip,"%d",&tempb);
-				fprintf(fir,"(%s,%d)(C,%d)     \t %d\n","DL",1,tempb,lc);
+				fprintf(fir,"(%s,%d) (C,%d)     \t %d\n","DL",1,tempb,lc);
 				lc++;
 				fscanf(fip,"%s",wc); //read next
 				goto up;
@@ -262,17 +262,17 @@ int main()
 			if(!strcmp(wc,"LTORG"))
 			{
 				fscanf(fip,"%s",wc); //read next
-				POOL[pooltab]++;
 				pooltab++;
 				poolflag=LTP;
+				POOL[pooltab]=poolflag;
 				goto up;				
 			}
 			if(!strcmp(wc,"END"))
 			{
 				fprintf(fir,"                    \t %d\n",lc);
-				POOL[pooltab]++;
 				pooltab++;
 				poolflag=LTP;
+				POOL[pooltab]=poolflag;
 				break;
 			}			
 		}
@@ -286,7 +286,7 @@ int main()
 	for(i=0;i<LTP;i++)
 		printf("\n %d           \t %c\t%d",i,lit[i].name,lit[i].add);
 	printf("\n\n3]POOL TAB:\n------------------------------------\nPOOL NO.\tPOOL\n");
-	for(i=0;i<poolflag;i++)
+	for(i=0;i<poolflag+1;i++)
 	        printf("%d\t\t%d\n",i,POOL[i]);
 	       
 	fclose(fir); //close files opened
