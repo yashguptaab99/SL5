@@ -29,6 +29,8 @@ int main()
 	FILE *fip,*fir;
 	fip=fopen("input.asm","r"); //assembler input
 	fir=fopen("ir.txt","w"); //Intermediate Representation
+	sym=fopen("sym.txt","w");//symbol table
+	lit=fopen("lit.txt","w");//literal table
 	fscanf(fip,"%s",wc); //read input
 	while(!feof(fip))
 	{	
@@ -288,8 +290,18 @@ int main()
 	printf("\n\n3]POOL TAB:\n------------------------------------\nPOOL NO.\tPOOL\n");
 	for(i=0;i<poolflag+1;i++)
 	        printf("%d\t\t%d\n",i,POOL[i]);
-	       
-	fclose(fir); //close files opened
+	
+	fprintf(sym,"\n\n1] SYMBOL TABLE:\n------------------------------------\nSYMBOL NO.\tSYMBOL\tADDRESS");
+	for(i=1;i<STP;i++)
+		fprintf(sym,"\n %d          \t %s\t%d",i,sy[i].name,sy[i].add);
+	fprintf(lit,"\n\n2] LITERAL TABLE:\n------------------------------------\nLITERAL NO.\tLITERAL\tADDRESS");
+	for(i=0;i<LTP;i++)
+		fprintf(lit,"\n %d           \t %c\t%d",i,lit[i].name,lit[i].add);
+	
+	 //close files opened
+	fclose(sym);
+	fclose(lit);       
+	fclose(fir);
 	fclose(fip);
 	return 0;
 }
