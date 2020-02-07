@@ -8,9 +8,9 @@ struct pair
 	int comparison; 
 }; 
 
-struct pair getMinMaxOptimal(int arr[], int low, int high) 
+struct pair getMinMaxOptimal(int arr[], int low, int high, struct pair minmax) 
 { 
-	struct pair minmax, mml, mmr;	 
+	struct pair mml, mmr;	 
 	int mid; 
 	minmax.comparison = 0;
 
@@ -42,20 +42,32 @@ struct pair getMinMaxOptimal(int arr[], int low, int high)
 	
 	/* If there are more than 2 elements */
 	mid = (low + high)/2; 
-	mml = getMinMaxOptimal(arr, low, mid); 
-	mmr = getMinMaxOptimal(arr, mid+1, high); 
+	mml = getMinMaxOptimal(arr, low, mid, minmax); 
+	mmr = getMinMaxOptimal(arr, mid+1, high, minmax); 
 	
 	/* compare minimums of two parts*/
-	if (mml.min < mmr.min) 
-		minmax.min = mml.min; 
+	if (mml.min < mmr.min)
+	{ 
+		minmax.min = mml.min;
+		minmax.comparison++;
+	} 
 	else
-		minmax.min = mmr.min;	 
+	{
+		minmax.min = mmr.min;
+		minmax.comparison++;
+	}	 
 
 	/* compare maximums of two parts*/
 	if (mml.max > mmr.max) 
-		minmax.max = mml.max; 
+	{
+		minmax.max = mml.max;
+		minmax.comparison++; 
+	}
 	else
-		minmax.max = mmr.max;	 
+	{
+		minmax.max = mmr.max;
+		minmax.comparison++;
+	}	 
 
 	return minmax; 
 } 
@@ -111,10 +123,10 @@ struct pair getMinMax(int arr[], int n)
 /* Driver program to test above function */
 int main() 
 { 
-	int arr[] = {1000, 11, 445, 1, 330, 3000};
-	int arr_size = 6; 
-
-	struct pair minmax1 = getMinMaxOptimal(arr, 0, arr_size-1); 
+	int arr[] = {1000, 11, 445, 1, 330, 3000, 47, 4000, 503, 243, 453, 3, 12, 6000, 32};
+	int arr_size = 15; 
+	struct pair minmax1;
+	minmax1 = getMinMaxOptimal(arr, 0, arr_size-1, minmax1); 
 	printf("\n-------------Optimal result-------------");
 	printf("\n\tMinimum element is %d", minmax1.min); 
 	printf("\n\tMaximum element is %d", minmax1.max);
