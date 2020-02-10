@@ -1,9 +1,5 @@
-
-
-1] SYMBOL TABLE:
-------------------------------------
-SYMBOL NO.	SYMBOL	ADDRESS
- 1          	 A	100
- 2          	 B	105
- 3          	 C	115
- 4          	 LOOP	0
+4
+0          	 A	100
+1          	 B	105
+2          	 C	115
+3          	 LOOP	0

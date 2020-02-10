@@ -25,7 +25,7 @@ int main()
 
 	char wc[10],temps[20];	
 	int POOL[10]={0},poolflag=0,pooltab=0;
-	int lc,LTP=0,STP=1,i,j=0,k=0,litflag=0,m=0,tempb,flag=0,oldLC=0,val=0;
+	int lc,LTP=0,STP=0,i,j=0,k=0,litflag=0,m=0,tempb,flag=0,oldLC=0,val=0;
 	FILE *fip,*fir,*symtab,*littab;
 	fip=fopen("input.asm","r"); //assembler input
 	fir=fopen("ir.txt","w"); //Intermediate Representation
@@ -282,7 +282,7 @@ int main()
 	//print databases
 	printf("\n DATABASE:-");
 	printf("\n\n1] SYMBOL TABLE:\n------------------------------------\nSYMBOL NO.\tSYMBOL\tADDRESS");
-	for(i=1;i<STP;i++)
+	for(i=0;i<STP;i++)
 		printf("\n %d          \t %s\t%d",i,sy[i].name,sy[i].add);
 	printf("\n\n2] LITERAL TABLE:\n------------------------------------\nLITERAL NO.\tLITERAL\tADDRESS");
 	for(i=0;i<LTP;i++)
@@ -291,12 +291,14 @@ int main()
 	for(i=0;i<poolflag+1;i++)
 	        printf("%d\t\t%d\n",i,POOL[i]);
 	
-	fprintf(symtab,"\n\n1] SYMBOL TABLE:\n------------------------------------\nSYMBOL NO.\tSYMBOL\tADDRESS");
-	for(i=1;i<STP;i++)
-		fprintf(symtab,"\n %d          \t %s\t%d",i,sy[i].name,sy[i].add);
-	fprintf(littab,"\n\n2] LITERAL TABLE:\n------------------------------------\nLITERAL NO.\tLITERAL\tADDRESS");
+	//fprintf(symtab,"\n\n1] SYMBOL TABLE:\n------------------------------------\nSYMBOL NO.\tSYMBOL\tADDRESS");
+	fprintf(symtab,"%d",STP);
+	for(i=0;i<STP;i++)
+		fprintf(symtab,"\n%d          \t %s\t%d",i,sy[i].name,sy[i].add);
+	//fprintf(littab,"\n\n2] LITERAL TABLE:\n------------------------------------\nLITERAL NO.\tLITERAL\tADDRESS");
+	fprintf(littab,"%d",LTP);
 	for(i=0;i<LTP;i++)
-		fprintf(littab,"\n %d           \t %c\t%d",i,lit[i].name,lit[i].add);
+		fprintf(littab,"\n%d           \t %c\t%d",i,lit[i].name,lit[i].add);
 	
 	 //close files opened
 	fclose(symtab);
