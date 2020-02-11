@@ -24,13 +24,14 @@ int main()
 {
 
 	char wc[10],temps[20];	
-	int POOL[10]={0},poolflag=0,pooltab=0;
+	int POOL[10]={0},poolflag=0,pool=0;
 	int lc,LTP=0,STP=0,i,j=0,k=0,litflag=0,m=0,tempb,flag=0,oldLC=0,val=0;
-	FILE *fip,*fir,*symtab,*littab;
+	FILE *fip,*fir,*symtab,*littab, *pooltab;
 	fip=fopen("input.asm","r"); //assembler input
 	fir=fopen("ir.txt","w"); //Intermediate Representation
 	symtab=fopen("symtab.txt","w");//symbol table
 	littab=fopen("littab.txt","w");//literal table
+	pooltab=fopen("pooltab.txt","w");//pool table
 	fscanf(fip,"%s",wc); //read input
 	while(!feof(fip))
 	{	
@@ -39,26 +40,26 @@ int main()
 		if(!strcmp(wc,"START")) //if start copy address(lc)
 		{
 			fscanf(fip,"%d",&lc);
-			fprintf(fir,"(%s,%d) (%s,%d)     \t %d\n","AD",1,"C",lc,lc);
+			fprintf(fir,"(%s,%d)(%s,%d)     \t %d\n","AD",1,"C",lc,lc);
 			fscanf(fip,"%s",wc); //read next
 			goto up;
 		}
 		//check origin
 		else if(!strcmp(wc,"ORIGIN")) //if ORIGIN copy address(lc)
 		{
-			fprintf(fir,"(%s,%d) ","AD",4);
+			fprintf(fir,"(%s,%d)","AD",4);
 			fscanf(fip,"%s",wc); //read next
 			for(j=0;j<STP;j++)
 			{
 				//check if said symbol is present in symbol table
 				if(!strcmp(sy[j].name,wc))
 				{
-					fprintf(fir,"(%s,%d)","S",j);
+					//fprintf(fir,"(%s,%d)","S",j);
 					fscanf(fip,"%s",wc); //read next
 					if(!strcmp(wc,"+"))
 					{
-					    fprintf(fir,"%s",wc);
-						fscanf(fip,"%s",wc); //read next
+					        //fprintf(fir,"%s",wc);
+					        fscanf(fip,"%s",wc); //read next
 						fprintf(fir,"%s",wc);
 						oldLC=lc;
 						val=atoi(wc);
@@ -66,14 +67,15 @@ int main()
 					}
 					if(!strcmp(wc,"-"))
 					{
-					    fprintf(fir,"%s",wc);
+					        //fprintf(fir,"%s",wc);
 						fscanf(fip,"%s",wc); //read next
 						fprintf(fir,"%s",wc);
 						oldLC=lc;
 						val=atoi(wc);
 						lc=sy[j].add-val;
 					}
-					fprintf(fir,"             \t %d/%d\n",oldLC,lc);
+					fprintf(fir,"(C,%d)",lc);
+					fprintf(fir,"        \t %d/%d\n",oldLC,lc);
 					fscanf(fip,"%s",wc); //read next
 					goto up;
 				}
@@ -81,7 +83,8 @@ int main()
 			val=atoi(wc);
 			oldLC=lc;
 			lc=val;
-			fprintf(fir,"             \t %d/%d\n",oldLC,lc);
+			fprintf(fir,"(C,%d)",lc);
+			fprintf(fir,"        \t %d/%d\n",oldLC,lc);
 			fscanf(fip,"%s",wc); //read next
 			goto up;
 		}
@@ -89,7 +92,7 @@ int main()
 		else if(!strcmp(wc,"EQU"))
 		{
 			int value;
-		    fprintf(fir,"(%s,%d) ","AD",5);  
+		        fprintf(fir,"(%s,%d)","AD",5);  
 			fscanf(fip,"%s",wc); //read next
 			for(j=0;j<STP;j++)
 			{
@@ -167,11 +170,11 @@ int main()
 					lc++;
 					goto up;
 				}	
-				fprintf(fir,"(%s,%d) ","IS",i); //found in mot
+				fprintf(fir,"(%s,%d)","IS",i); //found in mot
 				fscanf(fip,"%s",wc);
 				for(j=0;j<4;j++) //now find register
 					if(!strcmp(wc,r[j])){
-						fprintf(fir,"(R,%d) ",j+1);
+						fprintf(fir,"(R,%d)",j+1);
 						fscanf(fip,"%s",wc);
 					}	
 				if(!strcmp(wc,"=")) //if = it is literal
@@ -228,7 +231,7 @@ int main()
 			if(!strcmp(wc,"DS"))
 			{
 				fscanf(fip,"%d",&tempb);
-				fprintf(fir,"(%s,%d) (C,%d)     \t %d\n","DL",2,tempb,lc);
+				fprintf(fir,"(%s,%d)(C,%d)     \t %d\n","DL",2,tempb,lc);
 				lc+=tempb;
 				fscanf(fip,"%s",wc); //read next					
 				goto up;
@@ -236,7 +239,7 @@ int main()
 			else if(!strcmp(wc,"DC"))
 			{
 				fscanf(fip,"%d",&tempb);
-				fprintf(fir,"(%s,%d) (C,%d)     \t %d\n","DL",1,tempb,lc);
+				fprintf(fir,"(%s,%d)(C,%d)     \t %d\n","DL",1,tempb,lc);
 				lc++;
 				fscanf(fip,"%s",wc); //read next
 				goto up;
@@ -264,17 +267,17 @@ int main()
 			if(!strcmp(wc,"LTORG"))
 			{
 				fscanf(fip,"%s",wc); //read next
-				pooltab++;
+				pool++;
 				poolflag=LTP;
-				POOL[pooltab]=poolflag;
+				POOL[pool]=poolflag;
 				goto up;				
 			}
 			if(!strcmp(wc,"END"))
 			{
 				fprintf(fir,"                    \t %d\n",lc);
-				pooltab++;
+				pool++;
 				poolflag=LTP;
-				POOL[pooltab]=poolflag;
+				POOL[pool]=poolflag;
 				break;
 			}			
 		}
@@ -299,7 +302,10 @@ int main()
 	fprintf(littab,"%d",LTP);
 	for(i=0;i<LTP;i++)
 		fprintf(littab,"\n%d           \t %c\t%d",i,lit[i].name,lit[i].add);
-	
+	fprintf(pooltab,"%d",pool);		
+	for(i=0;i<poolflag+1;i++)
+	        fprintf(pooltab,"\n%d\t\t%d",i,POOL[i]);
+	        
 	 //close files opened
 	fclose(symtab);
 	fclose(littab);       
