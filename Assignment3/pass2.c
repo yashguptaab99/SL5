@@ -107,7 +107,7 @@ void createSourceCode(int noOfTokens)
 		}
 		PTP++;
 	}
-    else if(!strcmp(word[0],"AD,3"))
+        else if(!strcmp(word[0],"AD,3"))
 	{
 		for(i=POOLTAB[PTP];i<POOLTAB[PTP+1];i++)
 		{
@@ -116,7 +116,7 @@ void createSourceCode(int noOfTokens)
 		}
 		PTP++;
 	}
-    else if(!strcmp(word[0],"AD,4"))	
+        else if(!strcmp(word[0],"AD,4"))	
 	{
 		substring(1,2,strlen(word[1])-1,str);
 		fprintf(fptr,"%d / %s\n",LC,str);
@@ -177,7 +177,7 @@ int main()
     FILE *symFile, *litFile,*poolFile, *input;
     int i=0,addr,iterator,j,p;
     PTP = 0;
-	POOLTAB[0] = 0;
+    POOLTAB[0] = 0;
 	LC = 0;
 	
     symFile = fopen("symtab.txt","r");
