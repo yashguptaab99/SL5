@@ -1,0 +1,48 @@
+yash (master *) Assignment11 $ lex calculator.l
+yash (master *) Assignment11 $ yacc calculator.y -d
+yash (master *) Assignment11 $ gcc lex.yy.c y.tab.c -w
+yash (master *) Assignment11 $ ./a.out
+
+Enter any Arithmetic Expression : 
+5 PLUS 3
+
+Result=8.000000
+
+Entered arithmetic expression is Valid
+
+yash (master *) Assignment11 $ ./a.out
+
+Enter any Arithmetic Expression : 
+5 SUB -3.0
+
+Result=8.000000
+
+Entered arithmetic expression is Valid
+
+yash (master *) Assignment11 $ ./a.out
+
+Enter any Arithmetic Expression : 
+-2 MUL 3.0
+
+Result=-6.000000
+
+Entered arithmetic expression is Valid
+
+yash (master *) Assignment11 $ ./a.out
+
+Enter any Arithmetic Expression : 
+13 MOD 10
+
+Result=3.000000
+
+Entered arithmetic expression is Valid
+
+yash (master *) Assignment11 $ ./a.out
+
+Enter any Arithmetic Expression : 
+qwq
+
+Entered arithmetic expression is Invalid
+
+yash (master *) Assignment11 $ 
+

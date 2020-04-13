@@ -1,0 +1,56 @@
+yash (master *) Assignment13 $ g++ tspLcbb.cpp
+yash (master *) Assignment13 $ ./a.out
+
+ENTER NO OF NODES : 4
+
+ENTER ADJ. MATRIX(0 for INF) : 
+
+MAT[0][0] : 0
+
+MAT[0][1] : 4
+
+MAT[0][2] : 12
+
+MAT[0][3] : 7
+
+MAT[1][0] : 5
+
+MAT[1][1] : 0
+
+MAT[1][2] : 0
+
+MAT[1][3] : 18
+
+MAT[2][0] : 11
+
+MAT[2][1] : 0
+
+MAT[2][2] : 0
+
+MAT[2][3] : 6
+
+MAT[3][0] : 10
+
+MAT[3][1] : 2
+
+MAT[3][2] : 3
+
+MAT[3][3] : 0
+
+ADJACENCY MATRIX : 
+
+2147483647     	4              	12             	7              	
+
+5              	2147483647     	2147483647     	18             	
+
+11             	2147483647     	2147483647     	6              	
+
+10             	2              	3              	2147483647     	
+
+
+Final Cost : 25
+
+Final Path : 0->2->3->1->0
+
+yash (master *) Assignment13 $ 
+

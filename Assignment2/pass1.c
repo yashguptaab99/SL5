@@ -20,6 +20,7 @@ struct s
 int isInMot(char [10]);
 int isInPot(char[10]);
 int isReg(char[10]);
+
 int main()
 {
 
@@ -54,22 +55,19 @@ int main()
 				//check if said symbol is present in symbol table
 				if(!strcmp(sy[j].name,wc))
 				{
-					//fprintf(fir,"(%s,%d)","S",j);
 					fscanf(fip,"%s",wc); //read next
 					if(!strcmp(wc,"+"))
 					{
-					        //fprintf(fir,"%s",wc);
 					        fscanf(fip,"%s",wc); //read next
-						fprintf(fir,"%s",wc);
+						//fprintf(fir,"%s",wc);
 						oldLC=lc;
 						val=atoi(wc);
 						lc=val+sy[j].add;
 					}
 					if(!strcmp(wc,"-"))
 					{
-					        //fprintf(fir,"%s",wc);
 						fscanf(fip,"%s",wc); //read next
-						fprintf(fir,"%s",wc);
+						//fprintf(fir,"%s",wc);
 						oldLC=lc;
 						val=atoi(wc);
 						lc=sy[j].add-val;
@@ -307,6 +305,7 @@ int main()
 	        fprintf(pooltab,"\n%d\t\t%d",i,POOL[i]);
 	        
 	 //close files opened
+	fclose(pooltab);
 	fclose(symtab);
 	fclose(littab);       
 	fclose(fir);

@@ -1,0 +1,40 @@
+yash (master *) Assignment9 $ g++ parser.cpp
+yash (master *) Assignment9 $ ./a.out
+
+---------------------------------------
+Defined Grammar is::
+
+declare -> type variable;
+type -> int | float | char
+variable -> id,variable | id
+---------------------------------------
+
+Enter input string::int id;
+
+----------STEPS----------
+declare -> type variable;
+type -> int
+variable ->id
+-------------------------
+
+String is accepted
+yash (master *) Assignment9 $ ./a.out
+
+---------------------------------------
+Defined Grammar is::
+
+declare -> type variable;
+type -> int | float | char
+variable -> id,variable | id
+---------------------------------------
+
+Enter input string::float,;
+
+----------STEPS----------
+declare -> type variable;
+type -> float
+-------------------------
+
+String is rejected
+yash (master *) Assignment9 $ 
+
